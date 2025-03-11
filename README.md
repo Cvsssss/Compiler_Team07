@@ -1,2 +1,3 @@
 # Goal
-This is a public repo for the Compilers subject (2025-2 semester), in this repo we are going to create our Lexer
+Create a Lexer using the PLY library, using Python as development language, we want to count the tokens in
+certain languagues to prove that we need a lexical analyzer to create a Compiler
