@@ -6,9 +6,7 @@ class CodeAnalyzerApp:
         self.root = root
         self.root.title("LEXER")
         self.root.geometry("800x400")
-        
-        self.selected_language = 'C'
-        
+
         # Crear un PanedWindow para dividir la ventana en dos paneles
         self.paned_window = tk.PanedWindow(root, orient=tk.HORIZONTAL)
         self.paned_window.pack(fill=tk.BOTH, expand=True)
@@ -36,9 +34,8 @@ class CodeAnalyzerApp:
         tk.Button(self.left_panel, text="Analizar", command=self.analyze).pack()
     
     def load_file(self):
-        ext = {"C": "c"}
-        selected_ext = ext[self.selected_language]
-        file_path = filedialog.askopenfilename(filetypes=[("Archivos de Código", f"*.{selected_ext}")])
+
+        file_path = filedialog.askopenfilename(filetypes=[("Archivos de Código", f"*.{'txt'}")])
         
         if file_path:
             with open(file_path, "r", encoding="utf-8") as file:
@@ -50,11 +47,11 @@ class CodeAnalyzerApp:
         if not code_content:
             messagebox.showwarning("Advertencia", "No hay código para analizar")
         else:
-            messagebox.showinfo("Análisis", f"Analizando código en {self.selected_language}")
+            messagebox.showinfo("Análisis", f"Analizando código en")
             # Aquí puedes agregar análisis adicional del código ingresado.
             # Por ejemplo, podrías mostrar el resultado en el área de texto de salida
-            self.text_area_output.delete("1.0", tk.END)
-            self.text_area_output.insert(tk.END, "Resultado del análisis...")
+            #self.text_area_output.delete("1.0", tk.END)
+            #self.text_area_output.insert(tk.END, "Resultado del análisis...")
 
 if __name__ == "__main__":
     root = tk.Tk()
