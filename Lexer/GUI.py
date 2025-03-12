@@ -47,7 +47,7 @@ class CodeAnalyzerApp:
         if not code_content:
             messagebox.showwarning("Advertencia", "No hay código para analizar")
         else:
-            messagebox.showinfo("Análisis", f"Analizando código en")
+            messagebox.showinfo("Análisis", f"Analizando código")
             # Aquí puedes agregar análisis adicional del código ingresado.
             # Por ejemplo, podrías mostrar el resultado en el área de texto de salida
             #self.text_area_output.delete("1.0", tk.END)
