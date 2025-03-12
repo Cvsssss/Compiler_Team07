@@ -93,8 +93,6 @@ int main(){
     print("El total es: %d",suma);
 }
 """
-
-# Metemos el texto (codigoPrueba) al lexer
 lexer.input(codigoPrueba)
 
 # Contamos los tokens
