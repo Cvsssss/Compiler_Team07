@@ -34,7 +34,6 @@ class CodeAnalyzerApp:
         tk.Button(self.left_panel, text="Analizar", command=self.analyze).pack()
     
     def load_file(self):
-
         file_path = filedialog.askopenfilename(filetypes=[("Archivos de Código", f"*.{'txt'}")])
         
         if file_path:

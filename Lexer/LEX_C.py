@@ -60,11 +60,13 @@ lexer = lex.lex()
 
 # Código de prueba
 codigoPrueba = """
+#include <stdio.h>
 
-int main(a,b){
+int main(){
     int suma = a + b;
-    return suma;
-    printf("Hola mundo");
+    a=2.5;
+    b=3;
+    printf("Resultado: %d", suma);
 }
 """
 lexer.input(codigoPrueba)
