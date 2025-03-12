@@ -4,76 +4,57 @@ from tkinter import filedialog, messagebox
 class CodeAnalyzerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Analizador de Código")
-        self.root.geometry("600x400")
+        self.root.title("LEXER")
+        self.root.geometry("800x400")
         
-        self.selected_language = None
+        self.selected_language = 'C'
         
-        tk.Label(root, text="Seleccione un lenguaje:").pack()
+        # Crear un PanedWindow para dividir la ventana en dos paneles
+        self.paned_window = tk.PanedWindow(root, orient=tk.HORIZONTAL)
+        self.paned_window.pack(fill=tk.BOTH, expand=True)
         
-        self.create_language_buttons()
+        # Panel izquierdo para la entrada de texto
+        self.left_panel = tk.Frame(self.paned_window)
+        self.paned_window.add(self.left_panel)
         
-        self.text_area = tk.Text(root, height=10)
-        self.text_area.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        # Área de texto para la entrada
+        self.text_area_input = tk.Text(self.left_panel, height=20)
+        self.text_area_input.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        tk.Button(root, text="Cargar Archivo", command=self.load_file).pack()
-        tk.Button(root, text="Analizar", command=self.analyze).pack()
-    
-    def create_language_buttons(self):
-        frame = tk.Frame(self.root)
-        frame.pack()
+        # Botón para cargar archivo
+        tk.Button(self.left_panel, text="Cargar Archivo", command=self.load_file).pack()
         
-        tk.Button(frame, text='C', command=lambda l='C': self.select_languageC(l)).pack(side=tk.LEFT, padx=5)
-
-        tk.Button(frame, text='Python', command=lambda l='Python': self.select_languagePython(l)).pack(side=tk.LEFT, padx=5)
-
-        tk.Button(frame, text='Java', command=lambda l='Java': self.select_languageJava(l)).pack(side=tk.LEFT, padx=5)
-
-        #languages = ["C", "Python", "Java"]
-        #for lang in languages:
-        #    tk.Button(frame, text=lang, command=lambda l=lang: self.select_language(l)).pack(side=tk.LEFT, padx=5)
-
-  
-    def select_languageC(self, language):
-        self.selected_language = language
-        messagebox.showinfo("Selección", f"Lenguaje seleccionado: {language}")
-        #Codigo para abrir el LEX para C
-
-    def select_languagePython(self, language):
-        self.selected_language = language
-        messagebox.showinfo("Selección", f"Lenguaje seleccionado: {language}")
-        #Codigo para abrir el LEX para Python
-
-    def select_languageJava(self, language):
-        self.selected_language = language
-        messagebox.showinfo("Selección", f"Lenguaje seleccionado: {language}")
-        #Codigo para abrir el LEX para Java
+        # Panel derecho para la salida de texto
+        self.right_panel = tk.Frame(self.paned_window)
+        self.paned_window.add(self.right_panel)
+        
+        # Área de texto para la salida
+        self.text_area_output = tk.Text(self.right_panel, height=20)
+        self.text_area_output.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Botón para analizar
+        tk.Button(self.left_panel, text="Analizar", command=self.analyze).pack()
     
     def load_file(self):
-        if not self.selected_language:
-            messagebox.showwarning("Advertencia", "Seleccione un lenguaje primero")
-            return
-        
-        ext = {"C": "c", "Python": "py", "Java": "java"}
+        ext = {"C": "c"}
         selected_ext = ext[self.selected_language]
         file_path = filedialog.askopenfilename(filetypes=[("Archivos de Código", f"*.{selected_ext}")])
         
         if file_path:
             with open(file_path, "r", encoding="utf-8") as file:
-                self.text_area.delete("1.0", tk.END)
-                self.text_area.insert(tk.END, file.read())
+                self.text_area_input.delete("1.0", tk.END)
+                self.text_area_input.insert(tk.END, file.read())
     
     def analyze(self):
-        if not self.selected_language:
-            messagebox.showwarning("Advertencia", "Seleccione un lenguaje primero")
-            return
-        
-        code_content = self.text_area.get("1.0", tk.END).strip()
+        code_content = self.text_area_input.get("1.0", tk.END).strip()
         if not code_content:
             messagebox.showwarning("Advertencia", "No hay código para analizar")
         else:
             messagebox.showinfo("Análisis", f"Analizando código en {self.selected_language}")
             # Aquí puedes agregar análisis adicional del código ingresado.
+            # Por ejemplo, podrías mostrar el resultado en el área de texto de salida
+            self.text_area_output.delete("1.0", tk.END)
+            self.text_area_output.insert(tk.END, "Resultado del análisis...")
 
 if __name__ == "__main__":
     root = tk.Tk()
