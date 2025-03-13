@@ -7,7 +7,7 @@ class CodeAnalyzerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("LEXER")
-        self.root.geometry("900x500")
+        self.root.geometry("1400x500")
 
         style = ttk.Style("darkly")
 

@@ -1,5 +1,7 @@
 import ply.lex as lex
 
+# Lista para guardar los errores
+errores = []
 # Definimos los tokens
 tokens = ('KEYWORDS', 'IDENTIFIER', 'OPERATOR', 'CONSTANT', 'PUNCTUATION', 'LITERAL')
 
@@ -35,7 +37,8 @@ t_ignore = ' \t\n'
 
 # Manejo de errores en caracteres desconocidos
 def t_error(t):
-    print(f"Carácter ilegal '{t.value[0]}' en la posición {t.lexpos}")
+    mensaje_error = f"Carácter ilegal '{t.value[0]}' en la posición {t.lexpos}"
+    errores.append(mensaje_error)  # Agregar el mensaje a la lista global
     t.lexer.skip(1)
 
 # Crear el lexer
@@ -71,9 +74,12 @@ def analyze_code(code):
             tokens_by_type["Literals"].append(tok.value)
     
     # Formatear salida
-    result = "\n=== Tokens ===\n"
+    result = "\n"
+    for error in errores:
+        result += f"{error}\n"
+    result += "\n=== Tokens ===\n"
     for key, values in tokens_by_type.items():
         result += f"{key}: {values}\n"
     result += f"\nTotal de tokens = {total_tokens}"
-    
+    errores.clear()
     return result
