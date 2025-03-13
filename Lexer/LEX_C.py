@@ -5,7 +5,9 @@ tokens = ('KEYWORDS', 'IDENTIFIER', 'OPERATOR', 'CONSTANT', 'PUNCTUATION', 'LITE
 
 # Definición de expresiones regulares para cada tipo de token
 def t_KEYWORDS(t):
-    r'int|return'
+    r'\b(const|double|float|int|short|char|long|struct|break|for|if|else|switch|case|do|while|default|goto|void|return)\b'
+    return t
+
     return t
     
 def t_IDENTIFIER(t):
