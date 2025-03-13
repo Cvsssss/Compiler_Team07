@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
-import LEX_C  # Importamos el lexer
+import LEX_C
 
 class CodeAnalyzerApp:
     def __init__(self, root):
@@ -9,8 +9,7 @@ class CodeAnalyzerApp:
         self.root.title("LEXER")
         self.root.geometry("900x500")
 
-        # Aplicar un tema moderno
-        style = ttk.Style("darkly")  # Puedes probar otros temas: 'cosmo', 'superhero', 'solar'
+        style = ttk.Style("darkly")
 
         # Panel principal con dos columnas
         self.paned_window = ttk.PanedWindow(root, orient=HORIZONTAL)
