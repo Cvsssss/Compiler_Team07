@@ -33,7 +33,7 @@ def t_LITERAL(t):
     return t
 
 # Ignorar espacios y saltos de línea
-t_ignore = ' \t\n'
+t_ignore = ' \t\n|#include<[a-zA-Z_][a-zA-Z_0-9]*>'
 
 # Manejo de errores en caracteres desconocidos
 def t_error(t):
