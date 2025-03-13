@@ -1,5 +1,5 @@
 import pytest
-from lexer import analyze_code  # Asegúrate de que el archivo del lexer se llame lexer.py
+from LEX_C import analyze_code  
 
 def test_keywords():
     code = "int x = 10;"
