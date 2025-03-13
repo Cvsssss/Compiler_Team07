@@ -32,11 +32,6 @@ def t_LITERAL(t):
     r'"([^"\\]|\\.)*"'
     return t
 
-def t_HEADER(t):
-    r'\#include\s*(<[^>]+>|"[^"]+")'
-    pass  # No retorna token, lo ignora completamente
-
-
 # Ignorar espacios y saltos de línea
 t_ignore = ' \t\n'
 
