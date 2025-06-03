@@ -9,7 +9,7 @@ tokens = (
     'MENOS', 'MAS', 'DIVISION', 'MULT'
 )
 
-# Palabras clave
+# Expresiones regulares para los tokens
 def t_KEYWORDS(t):
     r'\b(const|double|float|int|short|char|long|struct|break|for|if|else|switch|case|do|while|default|goto|void|return)\b'
     return t
