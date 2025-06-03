@@ -3,35 +3,103 @@ import ply.lex as lex
 # Lista para guardar los errores
 errores = []
 # Definimos los tokens
-tokens = ('KEYWORDS', 'IDENTIFIER', 'OPERATOR', 'CONSTANT', 'PUNCTUATION', 'LITERAL')
+tokens = ('KEYWORDS', 'IDENTIFIER', 'CONSTANT', 'PUNCTUATION', 'LITERAL',
+            'OPERATOR','ASSIGN', 'OR', 'AND', 'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE',
+            'MENOS', 'MAS', 'DIVISION', 'MULT')
 
 # Definición de expresiones regulares para cada tipo de token
 def t_KEYWORDS(t):
     r'\b(const|double|float|int|short|char|long|struct|break|for|if|else|switch|case|do|while|default|goto|void|return)\b'
-    return t
-
     return t
     
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     return t
 
-def t_OPERATOR(t):
-    r'==|!=|<=|>=|<|>|=|\+|\-|\*|/'
+#Expresion regular de operadores
+def t_ASSIGN(t):
+    r'\='
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
     return t
 
+def t_OR(t):
+    r'\|\|'
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_AND(t):
+    r'&&'
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_EQ(t):
+    r'\=='
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_NEQ(t):
+    r'\!='
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_LE(t):
+    r'\<='
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_GE(t):
+    r'\>='
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_LT(t):
+    r'\<'
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_GT(t):
+    r'\>'
+    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    return t
+
+def t_OPERATOR(t):
+    r'==|!=|<=|>=|<|>|='
+    return t
+
+#Expresion regular para los operadores aritméticos
+
+def t_MENOS(t):
+    r'\-'
+    return t
+
+def t_MAS(t):
+    r'\+'
+    return t
+
+def t_DIVISION(t):
+    r'\/'
+    return t
+
+def t_MULT(t):
+    r'\*'
+    return t
+
+#Expresion regular para CONSTANTES
 def t_CONSTANT(t):
     r'\d+(\.\d+)?'
     return t
 
+#Expresion regular para PUNTUACION
 def t_PUNCTUATION(t):
     r'[\(\):\[\]\{\};,.]'
     return t
 
+# Expresion regular para LITERALES
 def t_LITERAL(t):
     r'"([^"\\]|\\.)*"'
     return t
 
+#   Expresion regular para ignorar los HEADERS
 def t_HEADER(t):
     r'\#include\s*(<[^>]+>|"[^"]+")'
     pass  # No retorna token, lo ignora completamente
@@ -78,7 +146,7 @@ def analyze_code(code):
         elif tok.type == "LITERAL":
             tokens_by_type["Literals"].append(tok.value)
     
-    # Formatear salida
+# Formatear salida
     result = "\n"
     for error in errores:
         result += f"{error}\n"
