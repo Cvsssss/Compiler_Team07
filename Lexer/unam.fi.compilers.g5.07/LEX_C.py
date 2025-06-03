@@ -1,75 +1,53 @@
 import ply.lex as lex
 
-# Lista para guardar los errores
 errores = []
-# Definimos los tokens
-tokens = ('KEYWORDS', 'IDENTIFIER', 'CONSTANT', 'PUNCTUATION', 'LITERAL',
-            'OPERATOR','ASSIGN', 'OR', 'AND', 'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE',
-            'MENOS', 'MAS', 'DIVISION', 'MULT')
 
-# Definición de expresiones regulares para cada tipo de token
+# Tokens
+tokens = (
+    'KEYWORDS', 'IDENTIFIER', 'CONSTANT', 'PUNCTUATION', 'LITERAL',
+    'ASIGN', 'OR', 'AND', 'EQ', 'NEQ', 'IM', 'DM',
+    'MENOS', 'MAS', 'DIVISION', 'MULT'
+)
+
+# Palabras clave
 def t_KEYWORDS(t):
     r'\b(const|double|float|int|short|char|long|struct|break|for|if|else|switch|case|do|while|default|goto|void|return)\b'
     return t
-    
+
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     return t
 
-#Expresion regular de operadores
-def t_ASSIGN(t):
-    r'\='
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+def t_ASIGN(t):
+    r'='
     return t
 
 def t_OR(t):
     r'\|\|'
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
     return t
 
 def t_AND(t):
     r'&&'
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
     return t
 
 def t_EQ(t):
-    r'\=='
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    r'=='
     return t
 
 def t_NEQ(t):
-    r'\!='
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+    r'!='
     return t
 
-def t_LE(t):
-    r'\<='
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+def t_DM(t):
+    r'<='
     return t
 
-def t_GE(t):
-    r'\>='
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
+def t_IM(t):
+    r'>='
     return t
-
-def t_LT(t):
-    r'\<'
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
-    return t
-
-def t_GT(t):
-    r'\>'
-    t.type = 'OPERATOR'  # Cambiamos el tipo a OPERATOR
-    return t
-
-def t_OPERATOR(t):
-    r'==|!=|<=|>=|<|>|='
-    return t
-
-#Expresion regular para los operadores aritméticos
 
 def t_MENOS(t):
-    r'\-'
+    r'-'
     return t
 
 def t_MAS(t):
@@ -77,50 +55,40 @@ def t_MAS(t):
     return t
 
 def t_DIVISION(t):
-    r'\/'
+    r'/'
     return t
 
 def t_MULT(t):
     r'\*'
     return t
 
-#Expresion regular para CONSTANTES
 def t_CONSTANT(t):
     r'\d+(\.\d+)?'
+    t.value = float(t.value) if '.' in t.value else int(t.value)
     return t
 
-#Expresion regular para PUNTUACION
 def t_PUNCTUATION(t):
-    r'[\(\):\[\]\{\};,.]'
+    r'[(){}\[\];,]'
     return t
 
-# Expresion regular para LITERALES
 def t_LITERAL(t):
     r'"([^"\\]|\\.)*"'
     return t
 
-#   Expresion regular para ignorar los HEADERS
 def t_HEADER(t):
     r'\#include\s*(<[^>]+>|"[^"]+")'
-    pass  # No retorna token, lo ignora completamente
+    pass
 
-
-# Ignorar espacios y saltos de línea
 t_ignore = ' \t\n'
 
-# Manejo de errores en caracteres desconocidos
 def t_error(t):
-    mensaje_error = f"Carácter ilegal '{t.value[0]}' en la posición {t.lexpos}"
-    errores.append(mensaje_error)  # Agregar el mensaje a la lista global
+    errores.append(f"Carácter ilegal '{t.value[0]}' en posición {t.lexpos}")
     t.lexer.skip(1)
 
-# Crear el lexer
 lexer = lex.lex()
 
-# Función para analizar código y devolver los tokens
 def analyze_code(code):
     lexer.input(code)
-    
     tokens_by_type = {
         "Keywords": [],
         "Identifiers": [],
@@ -129,7 +97,6 @@ def analyze_code(code):
         "Punctuation": [],
         "Literals": []
     }
-    
     total_tokens = 0
     for tok in lexer:
         total_tokens += 1
@@ -137,16 +104,15 @@ def analyze_code(code):
             tokens_by_type["Keywords"].append(tok.value)
         elif tok.type == "IDENTIFIER":
             tokens_by_type["Identifiers"].append(tok.value)
-        elif tok.type == "OPERATOR":
+        elif tok.type in {"ASIGN", "EQ", "NEQ", "IM", "DM", "MAS", "MENOS", "MULT", "DIVISION", "AND", "OR"}:
             tokens_by_type["Operators"].append(tok.value)
         elif tok.type == "CONSTANT":
-            tokens_by_type["Constants"].append(tok.value)
+            tokens_by_type["Constants"].append(str(tok.value))
         elif tok.type == "PUNCTUATION":
             tokens_by_type["Punctuation"].append(tok.value)
         elif tok.type == "LITERAL":
             tokens_by_type["Literals"].append(tok.value)
-    
-# Formatear salida
+
     result = "\n"
     for error in errores:
         result += f"{error}\n"
