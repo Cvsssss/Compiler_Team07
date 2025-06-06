@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'rightASIGNleftORleftANDleftEQNEQleftIMDMleftMASMENOSleftMULTDIVISIONAND ASIGN CONSTANT DIVISION DM EQ IDENTIFIER IM KEYWORDS LITERAL MAS MENOS MULT NEQ OR PUNCTUATIONprograma : KEYWORDS IDENTIFIER PUNCTUATION PUNCTUATION bloquebloque : PUNCTUATION declaraciones PUNCTUATIONdeclaraciones : declaraciones declaracion\n| declaraciondeclaracion : KEYWORDS IDENTIFIER PUNCTUATIONdeclaracion : IDENTIFIER ASIGN expresion PUNCTUATIONexpresion : expresion MAS expresion\n| expresion MENOS expresion\n| expresion MULT expresion\n| expresion DIVISION expresionexpresion : CONSTANT\n| IDENTIFIER'
+_lr_signature = 'CHAR DIVIDE DOUBLE ELSE EQUALS FLOAT GT ID IF IGUALS INT LBRACE LONG LPAREN LT MINUS NUMBER PLUS PRINTF RBRACE RETURN RPAREN SEMICOLON SHORT STRING TIMESprograma : INT ID LPAREN RPAREN LBRACE statements RBRACEstatements : statements statement\n| statementstatement : declaration\n| assignment\n| if_statement\n| printf\n| return SEMICOLONdeclaration : tipo ID SEMICOLONtipo : INT\n| FLOAT\n| CHAR\n| DOUBLE\n| LONG\n| SHORTassignment : ID IGUALS expression SEMICOLONexpression : expression PLUS term\n| expression MINUS term\n| expression GT term\n| expression LT term\n| expression EQUALS termexpression : termterm : term TIMES factor\n| term DIVIDE factorterm : factorfactor : NUMBERfactor : IDif_statement : IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACEprintf : PRINTF LPAREN STRING RPAREN SEMICOLONreturn : RETURN expression'
     
-_lr_action_items = {'KEYWORDS':([0,6,8,9,13,16,20,],[2,10,10,-4,-3,-5,-6,]),'$end':([1,7,12,],[0,-1,-2,]),'IDENTIFIER':([2,6,8,9,10,13,15,16,20,21,22,23,24,],[3,11,11,-4,14,-3,17,-5,-6,17,17,17,17,]),'PUNCTUATION':([3,4,5,8,9,13,14,16,17,18,19,20,25,26,27,28,],[4,5,6,12,-4,-3,16,-5,-12,20,-11,-6,-7,-8,-9,-10,]),'ASIGN':([11,],[15,]),'CONSTANT':([15,21,22,23,24,],[19,19,19,19,19,]),'MAS':([17,18,19,25,26,27,28,],[-12,21,-11,-7,-8,-9,-10,]),'MENOS':([17,18,19,25,26,27,28,],[-12,22,-11,-7,-8,-9,-10,]),'MULT':([17,18,19,25,26,27,28,],[-12,23,-11,23,23,-9,-10,]),'DIVISION':([17,18,19,25,26,27,28,],[-12,24,-11,24,24,-9,-10,]),}
+_lr_action_items = {'INT':([0,6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[2,7,7,-3,-4,-5,-6,-7,-2,-8,-9,-16,7,-29,7,7,7,-28,]),'$end':([1,26,],[0,-1,]),'ID':([2,6,7,9,10,11,12,13,14,16,19,20,21,22,23,24,25,27,28,30,38,41,42,43,44,45,46,47,48,58,59,60,63,64,65,],[3,8,-10,8,-3,-4,-5,-6,-7,29,36,-11,-12,-13,-14,-15,36,-2,-8,36,-9,36,36,36,36,36,36,36,-16,8,-29,8,8,8,-28,]),'LPAREN':([3,17,18,],[4,30,31,]),'RPAREN':([4,33,34,35,36,39,40,51,52,53,54,55,56,57,],[5,-22,-25,-26,-27,49,50,-17,-18,-19,-20,-21,-23,-24,]),'LBRACE':([5,49,62,],[6,58,63,]),'IF':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[17,17,-3,-4,-5,-6,-7,-2,-8,-9,-16,17,-29,17,17,17,-28,]),'PRINTF':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[18,18,-3,-4,-5,-6,-7,-2,-8,-9,-16,18,-29,18,18,18,-28,]),'RETURN':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[19,19,-3,-4,-5,-6,-7,-2,-8,-9,-16,19,-29,19,19,19,-28,]),'FLOAT':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[20,20,-3,-4,-5,-6,-7,-2,-8,-9,-16,20,-29,20,20,20,-28,]),'CHAR':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[21,21,-3,-4,-5,-6,-7,-2,-8,-9,-16,21,-29,21,21,21,-28,]),'DOUBLE':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[22,22,-3,-4,-5,-6,-7,-2,-8,-9,-16,22,-29,22,22,22,-28,]),'LONG':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[23,23,-3,-4,-5,-6,-7,-2,-8,-9,-16,23,-29,23,23,23,-28,]),'SHORT':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[24,24,-3,-4,-5,-6,-7,-2,-8,-9,-16,24,-29,24,24,24,-28,]),'IGUALS':([8,],[25,]),'RBRACE':([9,10,11,12,13,14,27,28,38,48,59,60,64,65,],[26,-3,-4,-5,-6,-7,-2,-8,-9,-16,-29,61,65,-28,]),'SEMICOLON':([15,29,32,33,34,35,36,37,50,51,52,53,54,55,56,57,],[28,38,-30,-22,-25,-26,-27,48,59,-17,-18,-19,-20,-21,-23,-24,]),'NUMBER':([19,25,30,41,42,43,44,45,46,47,],[35,35,35,35,35,35,35,35,35,35,]),'STRING':([31,],[40,]),'PLUS':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[41,-22,-25,-26,-27,41,41,-17,-18,-19,-20,-21,-23,-24,]),'MINUS':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[42,-22,-25,-26,-27,42,42,-17,-18,-19,-20,-21,-23,-24,]),'GT':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[43,-22,-25,-26,-27,43,43,-17,-18,-19,-20,-21,-23,-24,]),'LT':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[44,-22,-25,-26,-27,44,44,-17,-18,-19,-20,-21,-23,-24,]),'EQUALS':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[45,-22,-25,-26,-27,45,45,-17,-18,-19,-20,-21,-23,-24,]),'TIMES':([33,34,35,36,51,52,53,54,55,56,57,],[46,-25,-26,-27,46,46,46,46,46,-23,-24,]),'DIVIDE':([33,34,35,36,51,52,53,54,55,56,57,],[47,-25,-26,-27,47,47,47,47,47,-23,-24,]),'ELSE':([61,],[62,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'programa':([0,],[1,]),'bloque':([5,],[7,]),'declaraciones':([6,],[8,]),'declaracion':([6,8,],[9,13,]),'expresion':([15,21,22,23,24,],[18,25,26,27,28,]),}
+_lr_goto_items = {'programa':([0,],[1,]),'statements':([6,58,63,],[9,60,64,]),'statement':([6,9,58,60,63,64,],[10,27,10,27,10,27,]),'declaration':([6,9,58,60,63,64,],[11,11,11,11,11,11,]),'assignment':([6,9,58,60,63,64,],[12,12,12,12,12,12,]),'if_statement':([6,9,58,60,63,64,],[13,13,13,13,13,13,]),'printf':([6,9,58,60,63,64,],[14,14,14,14,14,14,]),'return':([6,9,58,60,63,64,],[15,15,15,15,15,15,]),'tipo':([6,9,58,60,63,64,],[16,16,16,16,16,16,]),'expression':([19,25,30,],[32,37,39,]),'term':([19,25,30,41,42,43,44,45,],[33,33,33,51,52,53,54,55,]),'factor':([19,25,30,41,42,43,44,45,46,47,],[34,34,34,34,34,34,34,34,56,57,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,16 +27,34 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> programa","S'",1,None,None,None),
-  ('programa -> KEYWORDS IDENTIFIER PUNCTUATION PUNCTUATION bloque','programa',5,'p_programa','PARSER_C.py',16),
-  ('bloque -> PUNCTUATION declaraciones PUNCTUATION','bloque',3,'p_bloque','PARSER_C.py',20),
-  ('declaraciones -> declaraciones declaracion','declaraciones',2,'p_declaraciones','PARSER_C.py',24),
-  ('declaraciones -> declaracion','declaraciones',1,'p_declaraciones','PARSER_C.py',25),
-  ('declaracion -> KEYWORDS IDENTIFIER PUNCTUATION','declaracion',3,'p_declaracion_variable','PARSER_C.py',32),
-  ('declaracion -> IDENTIFIER ASIGN expresion PUNCTUATION','declaracion',4,'p_declaracion_asignacion','PARSER_C.py',36),
-  ('expresion -> expresion MAS expresion','expresion',3,'p_expresion_binaria','PARSER_C.py',40),
-  ('expresion -> expresion MENOS expresion','expresion',3,'p_expresion_binaria','PARSER_C.py',41),
-  ('expresion -> expresion MULT expresion','expresion',3,'p_expresion_binaria','PARSER_C.py',42),
-  ('expresion -> expresion DIVISION expresion','expresion',3,'p_expresion_binaria','PARSER_C.py',43),
-  ('expresion -> CONSTANT','expresion',1,'p_expresion_valor','PARSER_C.py',47),
-  ('expresion -> IDENTIFIER','expresion',1,'p_expresion_valor','PARSER_C.py',48),
+  ('programa -> INT ID LPAREN RPAREN LBRACE statements RBRACE','programa',7,'p_program','PARSER_C.py',8),
+  ('statements -> statements statement','statements',2,'p_statements','PARSER_C.py',12),
+  ('statements -> statement','statements',1,'p_statements','PARSER_C.py',13),
+  ('statement -> declaration','statement',1,'p_statement','PARSER_C.py',20),
+  ('statement -> assignment','statement',1,'p_statement','PARSER_C.py',21),
+  ('statement -> if_statement','statement',1,'p_statement','PARSER_C.py',22),
+  ('statement -> printf','statement',1,'p_statement','PARSER_C.py',23),
+  ('statement -> return SEMICOLON','statement',2,'p_statement','PARSER_C.py',24),
+  ('declaration -> tipo ID SEMICOLON','declaration',3,'p_declaration','PARSER_C.py',29),
+  ('tipo -> INT','tipo',1,'p_tipo','PARSER_C.py',35),
+  ('tipo -> FLOAT','tipo',1,'p_tipo','PARSER_C.py',36),
+  ('tipo -> CHAR','tipo',1,'p_tipo','PARSER_C.py',37),
+  ('tipo -> DOUBLE','tipo',1,'p_tipo','PARSER_C.py',38),
+  ('tipo -> LONG','tipo',1,'p_tipo','PARSER_C.py',39),
+  ('tipo -> SHORT','tipo',1,'p_tipo','PARSER_C.py',40),
+  ('assignment -> ID IGUALS expression SEMICOLON','assignment',4,'p_assignment','PARSER_C.py',57),
+  ('expression -> expression PLUS term','expression',3,'p_expression_binop','PARSER_C.py',62),
+  ('expression -> expression MINUS term','expression',3,'p_expression_binop','PARSER_C.py',63),
+  ('expression -> expression GT term','expression',3,'p_expression_binop','PARSER_C.py',64),
+  ('expression -> expression LT term','expression',3,'p_expression_binop','PARSER_C.py',65),
+  ('expression -> expression EQUALS term','expression',3,'p_expression_binop','PARSER_C.py',66),
+  ('expression -> term','expression',1,'p_expression_term','PARSER_C.py',70),
+  ('term -> term TIMES factor','term',3,'p_term_binop','PARSER_C.py',74),
+  ('term -> term DIVIDE factor','term',3,'p_term_binop','PARSER_C.py',75),
+  ('term -> factor','term',1,'p_term_factor','PARSER_C.py',79),
+  ('factor -> NUMBER','factor',1,'p_factor_number','PARSER_C.py',83),
+  ('factor -> ID','factor',1,'p_factor_id','PARSER_C.py',87),
+  ('if_statement -> IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE','if_statement',11,'p_if_statement','PARSER_C.py',92),
+  ('printf -> PRINTF LPAREN STRING RPAREN SEMICOLON','printf',5,'p_printf','PARSER_C.py',102),
+  ('return -> RETURN expression','return',2,'p_return','PARSER_C.py',108),
 ]

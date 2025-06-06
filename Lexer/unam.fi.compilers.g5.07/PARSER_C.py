@@ -1,146 +1,203 @@
 import ply.yacc as yacc
-from LEX_C import tokens
+from LEX_C import tokens, lexer as base_lexer
 from graphviz import Digraph
-import os
-import platform
 from graphviz.backend.execute import ExecutableNotFound
 
-precedence = (
-    ('right', 'ASIGN'),
-    ('left', 'OR'),
-    ('left', 'AND'),
-    ('left', 'EQ', 'NEQ'),
-    ('left', 'IM', 'DM'),
-    ('left', 'MAS', 'MENOS'),
-    ('left', 'MULT', 'DIVISION'),
-)
-    
-# Gramatica
-def p_programa(p):
-    '''programa : KEYWORDS IDENTIFIER PUNCTUATION PUNCTUATION bloque'''
-    p[0] = ("funcion_main", p[1], p[2], p[5])
-    add_node(p[0], p[1])
-    add_node(p[0], p[2])
-    add_node(p[0], p[5])
 
-def p_bloque(p):
-    '''bloque : PUNCTUATION declaraciones PUNCTUATION'''
-    p[0] = ("bloque", p[2])
-    add_node(p[0], p[2])
+def p_program(p):
+    '''programa : INT ID LPAREN RPAREN LBRACE statements RBRACE'''
+    p[0] = ('programa', p[6])
 
-def p_declaraciones(p):
-    '''declaraciones : declaraciones declaracion
-                     | declaracion'''
+def p_statements(p):
+    '''statements : statements statement
+                  | statement'''
     if len(p) == 3:
         p[0] = p[1] + [p[2]]
-        for decl in p[1]:
-            add_node(p[0], decl)
-        add_node(p[0], p[2])
     else:
         p[0] = [p[1]]
-        add_node(p[0], p[1])
 
-def p_declaracion_variable(p):
-    '''declaracion : KEYWORDS IDENTIFIER PUNCTUATION'''
-    p[0] = ("declaracion_variable", p[1], p[2])
-    add_node(p[0], p[1])
-    add_node(p[0], p[2])
+def p_statement(p):
+    '''statement : declaration
+                 | assignment
+                 | if_statement
+                 | printf
+                 | return SEMICOLON'''
+    p[0] = p[1]
 
-def p_declaracion_asignacion(p):
-    '''declaracion : IDENTIFIER ASIGN expresion PUNCTUATION'''
-    p[0] = ("asignacion", p[1], p[3])
-    add_node(p[0], p[1])
-    add_node(p[0], p[3])
+# PARA LAS DECLARACIONES
+def p_declaration(p):
+    '''declaration : tipo ID SEMICOLON'''
+    variables[p[2]] = 0
+    p[2] = ('id', p[2])
+    p[0] = ('declaracion', p[1], p[2])
 
-def p_expresion_binaria(p):
-    '''expresion : expresion MAS expresion
-                 | expresion MENOS expresion
-                 | expresion MULT expresion
-                 | expresion DIVISION expresion'''
-    p[0] = ("operacion", p[2], p[1], p[3])
-    add_node(p[0], p[1])
-    add_node(p[0], p[2])
-    add_node(p[0], p[3])
+def p_tipo(p):
+    '''tipo : INT
+           | FLOAT
+           | CHAR
+           | DOUBLE
+           | LONG
+           | SHORT'''
+    if p[1] == 'int': 
+        p[1] = ('tipo', p[1])
+    elif p[1] == 'float': 
+        p[1] = ('tipo', p[1])
+    elif p[1] == 'char': 
+        p[1] = ('tipo', p[1])
+    elif p[1] == 'double': 
+        p[1] = ('tipo', p[1])
+    elif p[1] == 'long': 
+        p[1] = ('tipo', p[1])
+    elif p[1] == 'short': 
+        p[1] = ('tipo', p[1])
+    p[0] = p[1]
 
-def p_expresion_valor(p):
-    '''expresion : CONSTANT
-                 | IDENTIFIER'''
-    p[0] = ("valor", p[1])
-    add_node(p[0], p[1])
+# PARA LAS ASIGNACIONES
+def p_assignment(p):
+    '''assignment : ID IGUALS expression SEMICOLON'''
+    variables[p[1]] = p[3]
+    p[0] = ('asignacion', p[1], p[3])
 
+def p_expression_binop(p):
+    '''expression : expression PLUS term
+                  | expression MINUS term
+                  | expression GT term
+                  | expression LT term
+                  | expression EQUALS term'''
+    p[0] = (p[2], p[1], p[3])
+
+def p_expression_term(p):
+    'expression : term'
+    p[0] = p[1]
+
+def p_term_binop(p):
+    '''term : term TIMES factor
+            | term DIVIDE factor'''
+    p[0] = (p[2], p[1], p[3])
+
+def p_term_factor(p):
+    'term : factor'
+    p[0] = p[1]
+
+def p_factor_number(p):
+    'factor : NUMBER'
+    p[0] = ('num', p[1])
+
+def p_factor_id(p):
+    'factor : ID'
+    p[0] = ('id', p[1])
+
+# PARA LAS EXPRESIONES
+def p_if_statement(p):
+    '''if_statement : IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE'''
+    if p[3]:
+        for stmt in p[6]: execute(stmt)
+    else:
+        for stmt in p[10]: execute(stmt)
+    p[10] = ('else', p[10])
+    p[0] = ('if', p[3], p[6], p[10])
+
+# Para el printf
+def p_printf(p):
+    '''printf : PRINTF LPAREN STRING RPAREN SEMICOLON'''
+    #print(p[3])
+    p[0] = ('printf', p[3])
+
+# Para el return
+def p_return(p):
+    '''return : RETURN expression'''
+    p[0] = ('return', p[2])
+
+# Para los errores de sintaxis
 def p_error(p):
     if p:
-        print(f"Error de sintaxis en '{p.value}'")
+        erroresPAR.append(f"Error de sintaxis cerca de '{p.value}' en la línea {p.lineno} columna {p.lexpos - p.lexer.lexdata.rfind('\n', 0, p.lexpos) + 1}")
     else:
-        print("Error de sintaxis: entrada incompleta")
+        erroresPAR.append("Error de sintaxis al final del archivo, falta un  '}' o un ';'")
 
-#FUNCIONES PARA CREAR EL ARBOL GRÁFICO
-def check_graphviz_installed():
-    try:
-        #Para verificar si Graphviz está instalado, intentamos crear un gráfico simple
-        test_dot = Digraph()
-        test_dot.node('A', 'Test')
-        test_dot.render('test_graph', format='png', cleanup=True)
-        os.remove('test_graph.png') #Y luego borro la imagen generada
-        return True
-    except ExecutableNotFound:
-        return False
-    except Exception:
-        return False
-
-# Variable global para el árbol gráfico
-dot = None
-graphviz_installed = check_graphviz_installed()
-
-def add_node(parent, child):
-    if graphviz_installed and dot is not None:
-        dot.node(str(id(child)), str(child))
-        if parent is not None:
-            dot.edge(str(id(parent)), str(id(child)))
-
-def generate_text_tree(node, level=0):
-    if isinstance(node, tuple):
-        result = "  " * level + node[0] + "\n"
-        for item in node[1:]:
-            result += generate_text_tree(item, level + 1)
-        return result
-    elif isinstance(node, list):
-        result = ""
-        for item in node:
-            result += generate_text_tree(item, level)
-        return result
-    else:
-        return "  " * level + str(node) + "\n"
-
+# Construir el parser
 parser = yacc.yacc()
 
-def parse_code(code):
-    global dot
-    
-    # Limpiar el árbol anterior
-    if graphviz_installed:
-        dot = Digraph(comment='Árbol Sintáctico', format='png')
-        dot.attr('node', shape='box', style='rounded')
-    
-    result = parser.parse(code)
-    
-    text_tree = "Árbol sintáctico:\n" + str(result)
-    
-    if graphviz_installed:
-        try:
-            dot.render('arbol_sintactico', format='png', cleanup=True)
-            return text_tree + "\n\nÁrbol gráfico generado, busca el archivo como 'arbol_sintactico.png'"
-        except Exception as e:
-            return text_tree + f"\n\nError al generar gráfico: {str(e)}"
+def execute(stmt):
+    if stmt[0] == 'declaracion':
+        pass
+    elif stmt[0] == 'asignacion':
+        variables[stmt[1]] = stmt[2]
+    elif stmt[0] == 'printf':
+        print(stmt[1])
+
+def generar_arbol_sintactico(arbol, dot=None, padre=None):
+    if dot is None:
+        dot = Digraph()
+
+    if isinstance(arbol, tuple):
+        etiqueta = str(arbol[0])
+        nombre_nodo = str(id(arbol))
+        dot.node(nombre_nodo, etiqueta)
+        if padre:
+            dot.edge(padre, nombre_nodo)
+        for hijo in arbol[1:]:
+            generar_arbol_sintactico(hijo, dot, nombre_nodo)
+
+    elif isinstance(arbol, list):
+        for sub_arbol in arbol:
+            generar_arbol_sintactico(sub_arbol, dot, padre)
+
     else:
-        install_instructions = {
-            'Darwin': "brew install graphviz",
-            'Linux': "sudo apt-get install graphviz",
-            'Windows': "Descargar de https://graphviz.org/download/"
-        }
-        system = platform.system()
-        instruction = install_instructions.get(system, 
-                     "Instala Graphviz desde https://graphviz.org/download/")
-        
-        return (text_tree + "\n\nPara ver el árbol gráfico, instala Graphviz:\n" +
-                instruction + "\nLuego reinicia la aplicación.")
+        nombre_nodo = str(id(arbol))
+        dot.node(nombre_nodo, str(arbol))
+        if padre:
+            dot.edge(padre, nombre_nodo)
+
+    return dot
+
+def parse_code(code):
+    global variables
+    global erroresPAR
+    erroresPAR = []
+    variables = {}  # Reiniciar variables entre ejecuciones
+
+    # Crear un nuevo lexer con lineno reiniciado
+    lexer = base_lexer.clone()
+    lexer.lineno = 1
+
+    result = parser.parse(code, lexer=lexer)
+    
+
+    # Generar imagen con Graphviz
+    try:
+        dot = Digraph(comment='Árbol Sintáctico')
+        if result is not None:
+            build_graph(dot, result)
+            dot.render("arbol_sintactico", format='png', cleanup=True)
+            output = "Árbol sintáctico generado correctamente.\n"
+            output += "Imagen del árbol generada: arbol_sintactico.png\n"
+        else:
+            output = "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
+
+    except ExecutableNotFound:
+        output += "Graphviz no está instalado. No se generó imagen.\n"
+
+    return output
+
+def build_graph(dot, node, parent=None, count=[0]):
+    """Construye un árbol sintáctico recursivamente en Graphviz."""
+    if isinstance(node, tuple):
+        label = node[0]
+        node_id = str(count[0])
+        count[0] += 1
+        dot.node(node_id, label)
+        if parent is not None:
+            dot.edge(parent, node_id)
+        for child in node[1:]:
+            build_graph(dot, child, node_id, count)
+    elif isinstance(node, list):
+        for item in node:
+            build_graph(dot, item, parent, count)
+    else:
+        label = str(node)
+        node_id = str(count[0])
+        count[0] += 1
+        dot.node(node_id, label)
+        if parent is not None:
+            dot.edge(parent, node_id)
