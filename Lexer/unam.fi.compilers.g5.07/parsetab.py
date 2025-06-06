@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CHAR DIVIDE DOUBLE ELSE EQUALS FLOAT GT ID IF IGUALS INT LBRACE LONG LPAREN LT MINUS NUMBER PLUS PRINTF RBRACE RETURN RPAREN SEMICOLON SHORT STRING TIMESprograma : INT ID LPAREN RPAREN LBRACE statements RBRACEstatements : statements statement\n| statementstatement : declaration\n| assignment\n| if_statement\n| printf\n| return SEMICOLONdeclaration : tipo ID SEMICOLONtipo : INT\n| FLOAT\n| CHAR\n| DOUBLE\n| LONG\n| SHORTassignment : ID IGUALS expression SEMICOLONexpression : expression PLUS term\n| expression MINUS term\n| expression GT term\n| expression LT term\n| expression EQUALS termexpression : termterm : term TIMES factor\n| term DIVIDE factorterm : factorfactor : NUMBERfactor : IDif_statement : IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACEprintf : PRINTF LPAREN STRING RPAREN SEMICOLONreturn : RETURN expression'
+_lr_signature = 'CHAR DIVIDE DOUBLE ELSE EQUALS FLOAT GT ID IF IGUALS INT LBRACE LONG LPAREN LT MINUS NUMBER PLUS PRINTF RBRACE RETURN RPAREN SEMICOLON SHORT STRING TIMESprograma : INT ID LPAREN RPAREN LBRACE statements RBRACEstatements : statements statement\n| statementstatement : declaration\n| assignment\n| if_statement\n| printf\n| return SEMICOLON\n| returndeclaration : tipo ID SEMICOLONtipo : INT\n| FLOAT\n| CHAR\n| DOUBLE\n| LONG\n| SHORTassignment : ID IGUALS expression SEMICOLONexpression : expression PLUS term\n| expression MINUS term\n| expression GT term\n| expression LT term\n| expression EQUALS termexpression : termterm : term TIMES factor\n| term DIVIDE factorterm : factorfactor : NUMBERfactor : IDif_statement : IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACEprintf : PRINTF LPAREN STRING RPAREN SEMICOLONreturn : RETURN expression\n| RETURN SEMICOLON'
     
-_lr_action_items = {'INT':([0,6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[2,7,7,-3,-4,-5,-6,-7,-2,-8,-9,-16,7,-29,7,7,7,-28,]),'$end':([1,26,],[0,-1,]),'ID':([2,6,7,9,10,11,12,13,14,16,19,20,21,22,23,24,25,27,28,30,38,41,42,43,44,45,46,47,48,58,59,60,63,64,65,],[3,8,-10,8,-3,-4,-5,-6,-7,29,36,-11,-12,-13,-14,-15,36,-2,-8,36,-9,36,36,36,36,36,36,36,-16,8,-29,8,8,8,-28,]),'LPAREN':([3,17,18,],[4,30,31,]),'RPAREN':([4,33,34,35,36,39,40,51,52,53,54,55,56,57,],[5,-22,-25,-26,-27,49,50,-17,-18,-19,-20,-21,-23,-24,]),'LBRACE':([5,49,62,],[6,58,63,]),'IF':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[17,17,-3,-4,-5,-6,-7,-2,-8,-9,-16,17,-29,17,17,17,-28,]),'PRINTF':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[18,18,-3,-4,-5,-6,-7,-2,-8,-9,-16,18,-29,18,18,18,-28,]),'RETURN':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[19,19,-3,-4,-5,-6,-7,-2,-8,-9,-16,19,-29,19,19,19,-28,]),'FLOAT':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[20,20,-3,-4,-5,-6,-7,-2,-8,-9,-16,20,-29,20,20,20,-28,]),'CHAR':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[21,21,-3,-4,-5,-6,-7,-2,-8,-9,-16,21,-29,21,21,21,-28,]),'DOUBLE':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[22,22,-3,-4,-5,-6,-7,-2,-8,-9,-16,22,-29,22,22,22,-28,]),'LONG':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[23,23,-3,-4,-5,-6,-7,-2,-8,-9,-16,23,-29,23,23,23,-28,]),'SHORT':([6,9,10,11,12,13,14,27,28,38,48,58,59,60,63,64,65,],[24,24,-3,-4,-5,-6,-7,-2,-8,-9,-16,24,-29,24,24,24,-28,]),'IGUALS':([8,],[25,]),'RBRACE':([9,10,11,12,13,14,27,28,38,48,59,60,64,65,],[26,-3,-4,-5,-6,-7,-2,-8,-9,-16,-29,61,65,-28,]),'SEMICOLON':([15,29,32,33,34,35,36,37,50,51,52,53,54,55,56,57,],[28,38,-30,-22,-25,-26,-27,48,59,-17,-18,-19,-20,-21,-23,-24,]),'NUMBER':([19,25,30,41,42,43,44,45,46,47,],[35,35,35,35,35,35,35,35,35,35,]),'STRING':([31,],[40,]),'PLUS':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[41,-22,-25,-26,-27,41,41,-17,-18,-19,-20,-21,-23,-24,]),'MINUS':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[42,-22,-25,-26,-27,42,42,-17,-18,-19,-20,-21,-23,-24,]),'GT':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[43,-22,-25,-26,-27,43,43,-17,-18,-19,-20,-21,-23,-24,]),'LT':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[44,-22,-25,-26,-27,44,44,-17,-18,-19,-20,-21,-23,-24,]),'EQUALS':([32,33,34,35,36,37,39,51,52,53,54,55,56,57,],[45,-22,-25,-26,-27,45,45,-17,-18,-19,-20,-21,-23,-24,]),'TIMES':([33,34,35,36,51,52,53,54,55,56,57,],[46,-25,-26,-27,46,46,46,46,46,-23,-24,]),'DIVIDE':([33,34,35,36,51,52,53,54,55,56,57,],[47,-25,-26,-27,47,47,47,47,47,-23,-24,]),'ELSE':([61,],[62,]),}
+_lr_action_items = {'INT':([0,6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[2,7,7,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,7,-30,7,7,7,-29,]),'$end':([1,26,],[0,-1,]),'ID':([2,6,7,9,10,11,12,13,14,15,16,19,20,21,22,23,24,25,27,28,30,32,33,34,35,36,37,39,42,43,44,45,46,47,48,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[3,8,-11,8,-3,-4,-5,-6,-7,-9,29,37,-12,-13,-14,-15,-16,37,-2,-8,37,-31,-32,-23,-26,-27,-28,-10,37,37,37,37,37,37,37,-17,-18,-19,-20,-21,-22,-24,-25,8,-30,8,8,8,-29,]),'LPAREN':([3,17,18,],[4,30,31,]),'RPAREN':([4,34,35,36,37,40,41,52,53,54,55,56,57,58,],[5,-23,-26,-27,-28,50,51,-18,-19,-20,-21,-22,-24,-25,]),'LBRACE':([5,50,63,],[6,59,64,]),'IF':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[17,17,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,17,-30,17,17,17,-29,]),'PRINTF':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[18,18,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,18,-30,18,18,18,-29,]),'RETURN':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[19,19,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,19,-30,19,19,19,-29,]),'FLOAT':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[20,20,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,20,-30,20,20,20,-29,]),'CHAR':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[21,21,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,21,-30,21,21,21,-29,]),'DOUBLE':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[22,22,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,22,-30,22,22,22,-29,]),'LONG':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[23,23,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,23,-30,23,23,23,-29,]),'SHORT':([6,9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,59,60,61,64,65,66,],[24,24,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,24,-30,24,24,24,-29,]),'IGUALS':([8,],[25,]),'RBRACE':([9,10,11,12,13,14,15,27,28,32,33,34,35,36,37,39,49,52,53,54,55,56,57,58,60,61,65,66,],[26,-3,-4,-5,-6,-7,-9,-2,-8,-31,-32,-23,-26,-27,-28,-10,-17,-18,-19,-20,-21,-22,-24,-25,-30,62,66,-29,]),'SEMICOLON':([15,19,29,32,33,34,35,36,37,38,51,52,53,54,55,56,57,58,],[28,33,39,-31,-32,-23,-26,-27,-28,49,60,-18,-19,-20,-21,-22,-24,-25,]),'NUMBER':([19,25,30,42,43,44,45,46,47,48,],[36,36,36,36,36,36,36,36,36,36,]),'STRING':([31,],[41,]),'PLUS':([32,34,35,36,37,38,40,52,53,54,55,56,57,58,],[42,-23,-26,-27,-28,42,42,-18,-19,-20,-21,-22,-24,-25,]),'MINUS':([32,34,35,36,37,38,40,52,53,54,55,56,57,58,],[43,-23,-26,-27,-28,43,43,-18,-19,-20,-21,-22,-24,-25,]),'GT':([32,34,35,36,37,38,40,52,53,54,55,56,57,58,],[44,-23,-26,-27,-28,44,44,-18,-19,-20,-21,-22,-24,-25,]),'LT':([32,34,35,36,37,38,40,52,53,54,55,56,57,58,],[45,-23,-26,-27,-28,45,45,-18,-19,-20,-21,-22,-24,-25,]),'EQUALS':([32,34,35,36,37,38,40,52,53,54,55,56,57,58,],[46,-23,-26,-27,-28,46,46,-18,-19,-20,-21,-22,-24,-25,]),'TIMES':([34,35,36,37,52,53,54,55,56,57,58,],[47,-26,-27,-28,47,47,47,47,47,-24,-25,]),'DIVIDE':([34,35,36,37,52,53,54,55,56,57,58,],[48,-26,-27,-28,48,48,48,48,48,-24,-25,]),'ELSE':([62,],[63,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'programa':([0,],[1,]),'statements':([6,58,63,],[9,60,64,]),'statement':([6,9,58,60,63,64,],[10,27,10,27,10,27,]),'declaration':([6,9,58,60,63,64,],[11,11,11,11,11,11,]),'assignment':([6,9,58,60,63,64,],[12,12,12,12,12,12,]),'if_statement':([6,9,58,60,63,64,],[13,13,13,13,13,13,]),'printf':([6,9,58,60,63,64,],[14,14,14,14,14,14,]),'return':([6,9,58,60,63,64,],[15,15,15,15,15,15,]),'tipo':([6,9,58,60,63,64,],[16,16,16,16,16,16,]),'expression':([19,25,30,],[32,37,39,]),'term':([19,25,30,41,42,43,44,45,],[33,33,33,51,52,53,54,55,]),'factor':([19,25,30,41,42,43,44,45,46,47,],[34,34,34,34,34,34,34,34,56,57,]),}
+_lr_goto_items = {'programa':([0,],[1,]),'statements':([6,59,64,],[9,61,65,]),'statement':([6,9,59,61,64,65,],[10,27,10,27,10,27,]),'declaration':([6,9,59,61,64,65,],[11,11,11,11,11,11,]),'assignment':([6,9,59,61,64,65,],[12,12,12,12,12,12,]),'if_statement':([6,9,59,61,64,65,],[13,13,13,13,13,13,]),'printf':([6,9,59,61,64,65,],[14,14,14,14,14,14,]),'return':([6,9,59,61,64,65,],[15,15,15,15,15,15,]),'tipo':([6,9,59,61,64,65,],[16,16,16,16,16,16,]),'expression':([19,25,30,],[32,38,40,]),'term':([19,25,30,42,43,44,45,46,],[34,34,34,52,53,54,55,56,]),'factor':([19,25,30,42,43,44,45,46,47,48,],[35,35,35,35,35,35,35,35,57,58,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -35,26 +35,28 @@ _lr_productions = [
   ('statement -> if_statement','statement',1,'p_statement','PARSER_C.py',22),
   ('statement -> printf','statement',1,'p_statement','PARSER_C.py',23),
   ('statement -> return SEMICOLON','statement',2,'p_statement','PARSER_C.py',24),
-  ('declaration -> tipo ID SEMICOLON','declaration',3,'p_declaration','PARSER_C.py',29),
-  ('tipo -> INT','tipo',1,'p_tipo','PARSER_C.py',35),
-  ('tipo -> FLOAT','tipo',1,'p_tipo','PARSER_C.py',36),
-  ('tipo -> CHAR','tipo',1,'p_tipo','PARSER_C.py',37),
-  ('tipo -> DOUBLE','tipo',1,'p_tipo','PARSER_C.py',38),
-  ('tipo -> LONG','tipo',1,'p_tipo','PARSER_C.py',39),
-  ('tipo -> SHORT','tipo',1,'p_tipo','PARSER_C.py',40),
-  ('assignment -> ID IGUALS expression SEMICOLON','assignment',4,'p_assignment','PARSER_C.py',57),
-  ('expression -> expression PLUS term','expression',3,'p_expression_binop','PARSER_C.py',62),
-  ('expression -> expression MINUS term','expression',3,'p_expression_binop','PARSER_C.py',63),
-  ('expression -> expression GT term','expression',3,'p_expression_binop','PARSER_C.py',64),
-  ('expression -> expression LT term','expression',3,'p_expression_binop','PARSER_C.py',65),
-  ('expression -> expression EQUALS term','expression',3,'p_expression_binop','PARSER_C.py',66),
-  ('expression -> term','expression',1,'p_expression_term','PARSER_C.py',70),
-  ('term -> term TIMES factor','term',3,'p_term_binop','PARSER_C.py',74),
-  ('term -> term DIVIDE factor','term',3,'p_term_binop','PARSER_C.py',75),
-  ('term -> factor','term',1,'p_term_factor','PARSER_C.py',79),
-  ('factor -> NUMBER','factor',1,'p_factor_number','PARSER_C.py',83),
-  ('factor -> ID','factor',1,'p_factor_id','PARSER_C.py',87),
-  ('if_statement -> IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE','if_statement',11,'p_if_statement','PARSER_C.py',92),
-  ('printf -> PRINTF LPAREN STRING RPAREN SEMICOLON','printf',5,'p_printf','PARSER_C.py',102),
-  ('return -> RETURN expression','return',2,'p_return','PARSER_C.py',108),
+  ('statement -> return','statement',1,'p_statement','PARSER_C.py',25),
+  ('declaration -> tipo ID SEMICOLON','declaration',3,'p_declaration','PARSER_C.py',30),
+  ('tipo -> INT','tipo',1,'p_tipo','PARSER_C.py',36),
+  ('tipo -> FLOAT','tipo',1,'p_tipo','PARSER_C.py',37),
+  ('tipo -> CHAR','tipo',1,'p_tipo','PARSER_C.py',38),
+  ('tipo -> DOUBLE','tipo',1,'p_tipo','PARSER_C.py',39),
+  ('tipo -> LONG','tipo',1,'p_tipo','PARSER_C.py',40),
+  ('tipo -> SHORT','tipo',1,'p_tipo','PARSER_C.py',41),
+  ('assignment -> ID IGUALS expression SEMICOLON','assignment',4,'p_assignment','PARSER_C.py',58),
+  ('expression -> expression PLUS term','expression',3,'p_expression_binop','PARSER_C.py',63),
+  ('expression -> expression MINUS term','expression',3,'p_expression_binop','PARSER_C.py',64),
+  ('expression -> expression GT term','expression',3,'p_expression_binop','PARSER_C.py',65),
+  ('expression -> expression LT term','expression',3,'p_expression_binop','PARSER_C.py',66),
+  ('expression -> expression EQUALS term','expression',3,'p_expression_binop','PARSER_C.py',67),
+  ('expression -> term','expression',1,'p_expression_term','PARSER_C.py',71),
+  ('term -> term TIMES factor','term',3,'p_term_binop','PARSER_C.py',75),
+  ('term -> term DIVIDE factor','term',3,'p_term_binop','PARSER_C.py',76),
+  ('term -> factor','term',1,'p_term_factor','PARSER_C.py',80),
+  ('factor -> NUMBER','factor',1,'p_factor_number','PARSER_C.py',84),
+  ('factor -> ID','factor',1,'p_factor_id','PARSER_C.py',88),
+  ('if_statement -> IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE','if_statement',11,'p_if_statement','PARSER_C.py',93),
+  ('printf -> PRINTF LPAREN STRING RPAREN SEMICOLON','printf',5,'p_printf','PARSER_C.py',103),
+  ('return -> RETURN expression','return',2,'p_return','PARSER_C.py',109),
+  ('return -> RETURN SEMICOLON','return',2,'p_return','PARSER_C.py',110),
 ]

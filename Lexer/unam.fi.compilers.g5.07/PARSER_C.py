@@ -21,7 +21,8 @@ def p_statement(p):
                  | assignment
                  | if_statement
                  | printf
-                 | return SEMICOLON'''
+                 | return SEMICOLON
+                 | return'''
     p[0] = p[1]
 
 # PARA LAS DECLARACIONES
@@ -105,8 +106,12 @@ def p_printf(p):
 
 # Para el return
 def p_return(p):
-    '''return : RETURN expression'''
-    p[0] = ('return', p[2])
+    '''return : RETURN expression
+              | RETURN SEMICOLON'''
+    if p[2] == ';':
+        p[0] = ('return', None)
+    else:
+        p[0] = ('return', p[2])
 
 # Para los errores de sintaxis
 def p_error(p):
@@ -157,11 +162,12 @@ def parse_code(code):
     erroresPAR = []
     variables = {}  # Reiniciar variables entre ejecuciones
 
-    # Crear un nuevo lexer con lineno reiniciado
+# Crear un nuevo lexer con lineno reiniciado
     lexer = base_lexer.clone()
     lexer.lineno = 1
 
     result = parser.parse(code, lexer=lexer)
+    print(result)
     
 
     # Generar imagen con Graphviz
@@ -174,7 +180,6 @@ def parse_code(code):
             output += "Imagen del árbol generada: arbol_sintactico.png\n"
         else:
             output = "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
-
     except ExecutableNotFound:
         output += "Graphviz no está instalado. No se generó imagen.\n"
 
