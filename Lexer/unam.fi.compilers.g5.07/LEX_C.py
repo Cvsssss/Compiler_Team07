@@ -1,124 +1,103 @@
 import ply.lex as lex
 
-errores = []
+erroresLEX = []
 
 # Tokens
 tokens = (
-    'KEYWORDS', 'IDENTIFIER', 'CONSTANT', 'PUNCTUATION', 'LITERAL',
-    'ASIGN', 'OR', 'AND', 'EQ', 'NEQ', 'IM', 'DM',
-    'MENOS', 'MAS', 'DIVISION', 'MULT'
+    'INT', 'FLOAT', 'CHAR','DOUBLE', 'LONG', 'SHORT',   # Tipos de datos
+    'RETURN','IF', 'ELSE',  # KEYWORDS
+    'ID', 'NUMBER',
+    'PLUS', 'MINUS', 'TIMES', 'DIVIDE',
+    'GT', 'LT', 'EQUALS', 'IGUALS',
+    'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE',
+    'SEMICOLON',
+    'PRINTF', 'STRING'
 )
 
-# Expresiones regulares para los tokens
-def t_KEYWORDS(t):
-    r'\b(const|double|float|int|short|char|long|struct|break|for|if|else|switch|case|do|while|default|goto|void|return)\b'
+#KEYWORDS
+KEYWORDS = {}
+
+#Tipo
+def t_tipo(t):
+    r'int|float|char|double|long|short'
+    t.type = t.value.upper()  # Convertir a mayúsculas para tokens
     return t
 
-def t_IDENTIFIER(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
+t_PLUS    = r'\+'
+t_MINUS   = r'-'
+t_TIMES   = r'\*'
+t_DIVIDE  = r'/'
+t_EQUALS  = r'=='
+t_IGUALS  = r'='
+t_GT      = r'>'
+t_LT      = r'<'
+t_LPAREN  = r'\('
+t_RPAREN  = r'\)'
+t_LBRACE  = r'\{'
+t_RBRACE  = r'\}'
+t_SEMICOLON = r';'
+
+t_ignore = ' \t'
+
+def t_INT(t):
+    r'int|float|char'
     return t
 
-def t_ASIGN(t):
-    r'='
+def t_IF(t):
+    r'if'
     return t
 
-def t_OR(t):
-    r'\|\|'
+def t_ELSE(t):
+    r'else'
     return t
 
-def t_AND(t):
-    r'&&'
+def t_PRINTF(t):
+    r'printf'
     return t
 
-def t_EQ(t):
-    r'=='
+def t_RETURN(t):
+    r'return'
     return t
 
-def t_NEQ(t):
-    r'!='
+def t_STRING(t):
+    r'"[^"\n]*"'
+    t.value = t.value[1:-1]  # Quita comillas
     return t
 
-def t_DM(t):
-    r'<='
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
     return t
 
-def t_IM(t):
-    r'>='
+def t_NUMBER(t):
+    r'\d+'
+    t.value = int(t.value)
     return t
 
-def t_MENOS(t):
-    r'-'
-    return t
-
-def t_MAS(t):
-    r'\+'
-    return t
-
-def t_DIVISION(t):
-    r'/'
-    return t
-
-def t_MULT(t):
-    r'\*'
-    return t
-
-def t_CONSTANT(t):
-    r'\d+(\.\d+)?'
-    t.value = float(t.value) if '.' in t.value else int(t.value)
-    return t
-
-def t_PUNCTUATION(t):
-    r'[(){}\[\];,]'
-    return t
-
-def t_LITERAL(t):
-    r'"([^"\\]|\\.)*"'
-    return t
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 
 def t_HEADER(t):
     r'\#include\s*(<[^>]+>|"[^"]+")'
     pass
 
-t_ignore = ' \t\n'
-
 def t_error(t):
-    errores.append(f"Carácter ilegal '{t.value[0]}' en posición {t.lexpos}")
+    erroresLEX.append(f"Carácter ilegal '{t.value[0]}' en posición {t.lexpos}")
     t.lexer.skip(1)
 
 lexer = lex.lex()
 
 def analyze_code(code):
     lexer.input(code)
-    tokens_by_type = {
-        "Keywords": [],
-        "Identifiers": [],
-        "Operators": [],
-        "Constants": [],
-        "Punctuation": [],
-        "Literals": []
-    }
-    total_tokens = 0
+    result = ""
+    if len(erroresLEX) > 0:
+        result += "=== ERROR LEXICO ===\n"
+        for error in erroresLEX:
+            result += f"Errores lexicos: {error}\n\n"
+    result += "=== Tokens Reconocidos ===\n"
+    i = 0
     for tok in lexer:
-        total_tokens += 1
-        if tok.type == "KEYWORDS":
-            tokens_by_type["Keywords"].append(tok.value)
-        elif tok.type == "IDENTIFIER":
-            tokens_by_type["Identifiers"].append(tok.value)
-        elif tok.type in {"ASIGN", "EQ", "NEQ", "IM", "DM", "MAS", "MENOS", "MULT", "DIVISION", "AND", "OR"}:
-            tokens_by_type["Operators"].append(tok.value)
-        elif tok.type == "CONSTANT":
-            tokens_by_type["Constants"].append(str(tok.value))
-        elif tok.type == "PUNCTUATION":
-            tokens_by_type["Punctuation"].append(tok.value)
-        elif tok.type == "LITERAL":
-            tokens_by_type["Literals"].append(tok.value)
-
-    result = "\n"
-    for error in errores:
-        result += f"{error}\n"
-    result += "\n=== Tokens ===\n"
-    for key, values in tokens_by_type.items():
-        result += f"{key}: {values}\n"
-    result += f"\nTotal de tokens = {total_tokens}"
-    errores.clear()
+        i = i+1
+    result += (f"Total de tokens = "+str(i))
+    erroresLEX.clear()  # Limpiar errores después del análisis
     return result

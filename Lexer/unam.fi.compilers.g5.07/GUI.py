@@ -42,8 +42,8 @@ class CodeAnalyzerApp:
 
 #Botones
         ttk.Button(self.left_panel, text="Cargar Archivo", bootstyle="success-outline", command=self.load_file).pack(pady=5)
-        ttk.Button(self.left_panel, text="Analizar Código", bootstyle="info-outline", command=self.analyze).pack(pady=5)
-        ttk.Button(self.left_panel, text="Analizar Parser", bootstyle="warning-outline", command=self.parse).pack(pady=5)
+        ttk.Button(self.left_panel, text="Analizador Lexico (LEXER)", bootstyle="info-outline", command=self.analyze).pack(pady=5)
+        ttk.Button(self.left_panel, text="Analizador Sintactico (PARSER)", bootstyle="warning-outline", command=self.parse).pack(pady=5)
 
 
 # Frame de la Salida
@@ -126,45 +126,54 @@ class CodeAnalyzerApp:
         self.text_area_output.delete("1.0", "end")
         self.text_area_output.insert("end", parse_result)
         self.text_area_output.config(state="disabled")
-        
-        # Intentar mostrar la imagen si existe
-        img_path = "arbol_sintactico.png"
-        if os.path.exists(img_path):
-            try:
-                # Limpiar ventana anterior si existe
-                if hasattr(self, 'img_window'):
-                    try:
-                        self.img_window.destroy()
-                    except:
-                        pass
-                
-                # Crear nueva ventana para la imagen
-                self.img_window = ttk.Toplevel(self.root)
-                self.img_window.title("Árbol Sintáctico")
-                
-                # Cargar imagen
-                img = Image.open(img_path)
-                img = img.resize((800, 600), Image.LANCZOS)
-                photo = ImageTk.PhotoImage(img)
-                
-                # Mostrar imagen
-                label = ttk.Label(self.img_window, image=photo)
-                label.image = photo  # mantener referencia
-                label.pack(padx=10, pady=10)
-                
-                # Botón para cerrar
-                ttk.Button(
-                    self.img_window, 
-                    text="Cerrar", 
-                    command=self.img_window.destroy
-                ).pack(pady=5)
-                
-            except Exception as e:
-                messagebox.showerror("Error", 
-                                f"No se pudo mostrar el árbol: {str(e)}")
+
+        if parse_result != "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n":
+            # Intentar mostrar la imagen si existe
+            img_path = "arbol_sintactico.png"
+            if os.path.exists(img_path):
+                try:
+                    # Limpiar ventana anterior si existe
+                    if hasattr(self, 'img_window'):
+                        try:
+                            self.img_window.destroy()
+                        except:
+                            pass
+                    
+                    # Crear nueva ventana para la imagen
+                    self.img_window = ttk.Toplevel(self.root)
+                    self.img_window.title("Árbol Sintáctico")
+                    
+                    # Cargar imagen
+                    img = Image.open(img_path)
+                    img = img.resize((800, 600), Image.LANCZOS)
+                    photo = ImageTk.PhotoImage(img)
+                    
+                    # Mostrar imagen
+                    label = ttk.Label(self.img_window, image=photo)
+                    label.image = photo  # mantener referencia
+                    label.pack(padx=10, pady=10)
+                    
+                    # Botón para cerrar
+                    ttk.Button(
+                        self.img_window, 
+                        text="Cerrar", 
+                        command=self.img_window.destroy
+                    ).pack(pady=5)
+                    
+                except Exception as e:
+                    messagebox.showerror("Error", 
+                                    f"No se pudo mostrar el árbol: {str(e)}")
+            else:
+                messagebox.showinfo("Información", 
+                                "Árbol sintáctico generado en formato texto. Instala Graphviz para ver la versión gráfica.")
         else:
-            messagebox.showinfo("Información", 
-                            "Árbol sintáctico generado en formato texto. Instala Graphviz para ver la versión gráfica.")
+            from PARSER_C import erroresPAR
+            self.text_area_output.config(state="normal")
+            self.text_area_output.delete("1.0", "end")
+            self.text_area_output.insert("end", parse_result)
+            for error in erroresPAR:
+                self.text_area_output.insert("end", f"{error}\n")
+            self.text_area_output.config(state="disabled")
 
 
 if __name__ == "__main__":
