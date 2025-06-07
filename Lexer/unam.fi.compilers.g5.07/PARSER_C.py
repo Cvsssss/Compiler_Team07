@@ -128,8 +128,6 @@ def execute(stmt):
         pass
     elif stmt[0] == 'asignacion':
         variables[stmt[1]] = stmt[2]
-    elif stmt[0] == 'printf':
-        print(stmt[1])
 
 def generar_arbol_sintactico(arbol, dot=None, padre=None):
     if dot is None:
@@ -160,7 +158,7 @@ def parse_code(code):
     global variables
     global erroresPAR
     erroresPAR = []
-    variables = {}  # Reiniciar variables entre ejecuciones
+    variables = {}
 
 # Crear un nuevo lexer con lineno reiniciado
     lexer = base_lexer.clone()
