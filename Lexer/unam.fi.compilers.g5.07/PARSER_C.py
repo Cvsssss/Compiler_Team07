@@ -165,7 +165,7 @@ def parse_code(code):
     lexer.lineno = 1
 
     result = parser.parse(code, lexer=lexer)
-    print(result)
+    
     
 
     # Generar imagen con Graphviz
