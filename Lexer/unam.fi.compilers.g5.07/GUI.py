@@ -1,4 +1,5 @@
 import ttkbootstrap as ttk
+import subprocess
 import os
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
@@ -39,11 +40,25 @@ class CodeAnalyzerApp:
 
         self.text_area_input = ttk.Text(self.left_panel, height=15, font=("Consolas", 12))
         self.text_area_input.pack(fill=BOTH, expand=True)
+        
+# Código por defecto
+        codigo_por_defecto = """int main(){
+        int x;
+        x = 10 * 2 + 1;
+        if (x>10){
+        \tprintf("x es mayor a 10");
+        }else{
+        \tprintf("x es menor a 10");
+        }
+        }"""
+        self.text_area_input.insert("1.0", codigo_por_defecto)
+
 
 #Botones
         ttk.Button(self.left_panel, text="Cargar Archivo", bootstyle="success-outline", command=self.load_file).pack(pady=5)
         ttk.Button(self.left_panel, text="Analizador Lexico (LEXER)", bootstyle="info-outline", command=self.analyze).pack(pady=5)
         ttk.Button(self.left_panel, text="Analizador Sintactico (PARSER)", bootstyle="warning-outline", command=self.parse).pack(pady=5)
+        ttk.Button(self.left_panel, text="Generar Código Objeto (.o)", bootstyle="danger-outline", command=self.compile_to_object).pack(pady=5)
 
 
 # Frame de la Salida
@@ -174,6 +189,37 @@ class CodeAnalyzerApp:
             for error in erroresPAR:
                 self.text_area_output.insert("end", f"{error}\n")
             self.text_area_output.config(state="disabled")
+
+#Función para el CODIGO OBJETO
+    def compile_to_object(self):
+        code_content = self.text_area_input.get("1.0", "end").strip()
+        if not code_content:
+            messagebox.showwarning("Advertencia", "No hay código para compilar")
+            return
+
+        archivo_c = "programa.c"
+        archivo_objeto = "programa.o"
+
+        # Crear el archivo .c
+        with open(archivo_c, 'w') as f:
+            f.write("#include <stdio.h>\n\n")
+            f.write(code_content)
+
+        # Compilar usando gcc
+        comando = ["gcc", "-c", archivo_c, "-o", archivo_objeto]
+
+        try:
+            resultado = subprocess.run(comando, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            output = f"✅ Código objeto generado exitosamente: {archivo_objeto}\n"
+        except subprocess.CalledProcessError as e:
+            output = f"❌ Error al compilar:\n{e.stderr}"
+
+        # Mostrar resultado en el área de salida
+        self.text_area_output.config(state="normal")
+        self.text_area_output.delete("1.0", "end")
+        self.text_area_output.insert("end", output)
+        self.text_area_output.config(state="disabled")
+
 
 
 if __name__ == "__main__":
