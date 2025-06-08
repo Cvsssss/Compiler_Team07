@@ -178,11 +178,18 @@ def parse_code(code):
     except ExecutableNotFound:
         output += "Graphviz no está instalado. No se generó imagen.\n"
 
-    # Añadir código objeto
-    output += "\nCódigo Objeto Generado:\n"
-    output += generar_codigo_objeto(result)
+    # Generar código objeto
+    codigo_objeto = generar_codigo_objeto(result)
+
+    try:
+        with open("codigo_objeto.asm", "w", encoding="utf-8") as f:
+            f.write(codigo_objeto)
+        output += "\nCódigo objeto guardado en archivo: codigo_objeto.asm\n"
+    except Exception as e:
+        output += f"\nError al guardar el archivo de código objeto: {str(e)}\n"
 
     return output
+
 
 
 def build_graph(dot, node, parent=None, count=[0]):
