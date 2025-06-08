@@ -134,7 +134,6 @@ class CodeAnalyzerApp:
 
         parse_result = PARSER_C.parse_code(code_content)
         
-        # Mostrar resultado en el área de texto
         self.text_area_output.config(state="normal")
         self.text_area_output.delete("1.0", "end")
         self.text_area_output.insert("end", parse_result)
@@ -151,7 +150,7 @@ class CodeAnalyzerApp:
                             self.img_window.destroy()
                         except:
                             pass
-                    
+
                     # Crear nueva ventana para la imagen
                     self.img_window = ttk.Toplevel(self.root)
                     self.img_window.title("Árbol Sintáctico")
@@ -172,13 +171,18 @@ class CodeAnalyzerApp:
                         text="Cerrar", 
                         command=self.img_window.destroy
                     ).pack(pady=5)
-                    
+
                 except Exception as e:
-                    messagebox.showerror("Error", 
-                                    f"No se pudo mostrar el árbol: {str(e)}")
+                    messagebox.showerror("Error", f"No se pudo mostrar el árbol: {str(e)}")
+                    
             else:
                 messagebox.showinfo("Información", 
                                 "Árbol sintáctico generado en formato texto. Instala Graphviz para ver la versión gráfica.")
+            
+            # Notificar que se generó el código ensamblador
+            if os.path.exists("codigo.asm"):
+                messagebox.showinfo("Código Objeto Generado", "Se generó el archivo 'codigo.asm' con el código en Zilog Z80.")
+
         else:
             from PARSER_C import erroresPAR
             self.text_area_output.config(state="normal")

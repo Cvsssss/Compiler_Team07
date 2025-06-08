@@ -179,18 +179,13 @@ def parse_code(code):
         output += "Graphviz no está instalado. No se generó imagen.\n"
 
     # Generar código objeto
-    codigo_objeto = generar_codigo_objeto(result)
-
-    try:
-        with open("codigo_objeto.asm", "w", encoding="utf-8") as f:
-            f.write(codigo_objeto)
-        output += "\nCódigo objeto guardado en archivo: codigo_objeto.asm\n"
-    except Exception as e:
-        output += f"\nError al guardar el archivo de código objeto: {str(e)}\n"
+    if result is not None:
+        asm_code = generar_codigo_zilog(result)
+        with open("codigo.asm", "w") as f:
+            f.write(asm_code)
+        output += "\nCódigo objeto generado en: codigo.asm\n"
 
     return output
-
-
 
 def build_graph(dot, node, parent=None, count=[0]):
     """Construye un árbol sintáctico recursivamente en Graphviz."""
@@ -213,67 +208,58 @@ def build_graph(dot, node, parent=None, count=[0]):
         dot.node(node_id, label)
         if parent is not None:
             dot.edge(parent, node_id)
-            
-def generar_codigo_objeto(ast, variables=None):
-    if variables is None:
-        variables = {}
 
+#GENERACIÓN DEL CÓDIGO OBJETO EN ENSAMBLADOR ZILOG
+def generar_codigo_zilog(ast):
     codigo = []
-    temporales = [f"t{i}" for i in range(100)]
-    t_index = 0
+    etiquetas = {'if': 0}
 
-    def generar_expr(expr):
-        nonlocal t_index
+    def gen_expr(expr):
         if expr[0] == 'num':
-            tmp = temporales[t_index]
-            t_index += 1
-            codigo.append(f"LOAD {tmp}, {expr[1]}")
-            return tmp
+            return [f"LD A, {expr[1]}"]
         elif expr[0] == 'id':
-            tmp = temporales[t_index]
-            t_index += 1
-            codigo.append(f"LOAD {tmp}, {expr[1]}")
-            return tmp
-        elif expr[0] in ['+', '-', '*', '/', '>', '<', '==']:
-            op_map = {'+': 'ADD', '-': 'SUB', '*': 'MUL', '/': 'DIV',
-                      '>': 'GT', '<': 'LT', '==': 'EQ'}
-            op1 = generar_expr(expr[1])
-            op2 = generar_expr(expr[2])
-            tmp = temporales[t_index]
-            t_index += 1
-            codigo.append(f"{op_map[expr[0]]} {tmp}, {op1}, {op2}")
-            return tmp
+            return [f"LD A, ({expr[1]})"]
+        elif expr[0] in ['+', '-', '*', '/', '>', '<']:
+            izq = gen_expr(expr[1])
+            der = gen_expr(expr[2])
+            op_map = {'+': 'ADD', '-': 'SUB', '*': 'CALL MUL', '/': 'CALL DIV',
+                      '>': 'CP', '<': 'CP'}
+            return izq + ["PUSH AF"] + der + ["POP BC", "LD A, B", op_map[expr[0]]]
+        return []
 
-    def recorrer(nodo):
-        nonlocal t_index
-        if nodo[0] == 'asignacion':
-            tmp = generar_expr(nodo[2])
-            codigo.append(f"STORE {nodo[1]}, {tmp}")
-        elif nodo[0] == 'printf':
-            codigo.append(f"PRINT {nodo[1]}")
-        elif nodo[0] == 'if':
-            cond = generar_expr(nodo[1])
-            etiqueta_else = f"ELSE_{t_index}"
-            etiqueta_fin = f"ENDIF_{t_index}"
-            t_index += 1
-            codigo.append(f"JZ {cond}, {etiqueta_else}")
-            for s in nodo[2]: recorrer(s)
-            codigo.append(f"JMP {etiqueta_fin}")
-            codigo.append(f"{etiqueta_else}:")
-            for s in nodo[3][1]: recorrer(s)
-            codigo.append(f"{etiqueta_fin}:")
-        elif nodo[0] == 'declaracion':
-            pass
-        elif nodo[0] == 'return':
-            if nodo[1] is not None:
-                tmp = generar_expr(nodo[1])
-                codigo.append(f"RET {tmp}")
-            else:
-                codigo.append("RET")
+    def gen_stmt(stmt):
+        nonlocal etiquetas
+        codigo_local = []
+        if stmt[0] == 'declaracion':
+            var = stmt[2][1]
+            codigo_local.append(f"{var}: DEFB 0")
+        elif stmt[0] == 'asignacion':
+            var = stmt[1]
+            codigo_local += gen_expr(stmt[2])
+            codigo_local.append(f"LD ({var}), A")
+        elif stmt[0] == 'printf':
+            mensaje = stmt[1].strip('"')
+            codigo_local.append(f"; PRINT \"{mensaje}\"")  # comentario
+        elif stmt[0] == 'if':
+            cond = gen_expr(stmt[1])
+            etq_else = f"ELSE_{etiquetas['if']}"
+            etq_end = f"ENDIF_{etiquetas['if']}"
+            etiquetas['if'] += 1
 
-    if ast[0] == 'programa':
-        for stmt in ast[1]:
-            recorrer(stmt)
+            codigo_local += cond
+            codigo_local.append(f"CP 10")
+            codigo_local.append(f"JP LE, {etq_else}")  # Jump si x <= 10
+
+            for s in stmt[2]:
+                codigo_local += gen_stmt(s)
+            codigo_local.append(f"JP {etq_end}")
+            codigo_local.append(f"{etq_else}:")
+            for s in stmt[3][1]:  # lista dentro de 'else'
+                codigo_local += gen_stmt(s)
+            codigo_local.append(f"{etq_end}:")
+        return codigo_local
+
+    for s in ast[1]:  # ast es ('programa', [stmt1, stmt2, ...])
+        codigo += gen_stmt(s)
 
     return '\n'.join(codigo)
-
