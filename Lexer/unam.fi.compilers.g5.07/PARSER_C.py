@@ -157,33 +157,33 @@ def generar_arbol_sintactico(arbol, dot=None, padre=None):
     return dot
 
 def parse_code(code):
-    global variables
-    global erroresPAR
+    global variables, erroresPAR
     erroresPAR = []
-    variables = {}  # Reiniciar variables entre ejecuciones
+    variables = {}
 
-# Crear un nuevo lexer con lineno reiniciado
     lexer = base_lexer.clone()
     lexer.lineno = 1
 
     result = parser.parse(code, lexer=lexer)
-    print(result)
-    
 
-    # Generar imagen con Graphviz
+    if not result:
+        return "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
+
+    output = "Árbol sintáctico generado correctamente.\n"
     try:
         dot = Digraph(comment='Árbol Sintáctico')
-        if result is not None:
-            build_graph(dot, result)
-            dot.render("arbol_sintactico", format='png', cleanup=True)
-            output = "Árbol sintáctico generado correctamente.\n"
-            output += "Imagen del árbol generada: arbol_sintactico.png\n"
-        else:
-            output = "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
+        build_graph(dot, result)
+        dot.render("arbol_sintactico", format='png', cleanup=True)
+        output += "Imagen del árbol generada: arbol_sintactico.png\n"
     except ExecutableNotFound:
         output += "Graphviz no está instalado. No se generó imagen.\n"
 
+    # Añadir código objeto
+    output += "\nCódigo Objeto Generado:\n"
+    output += generar_codigo_objeto(result)
+
     return output
+
 
 def build_graph(dot, node, parent=None, count=[0]):
     """Construye un árbol sintáctico recursivamente en Graphviz."""
@@ -206,3 +206,67 @@ def build_graph(dot, node, parent=None, count=[0]):
         dot.node(node_id, label)
         if parent is not None:
             dot.edge(parent, node_id)
+            
+def generar_codigo_objeto(ast, variables=None):
+    if variables is None:
+        variables = {}
+
+    codigo = []
+    temporales = [f"t{i}" for i in range(100)]
+    t_index = 0
+
+    def generar_expr(expr):
+        nonlocal t_index
+        if expr[0] == 'num':
+            tmp = temporales[t_index]
+            t_index += 1
+            codigo.append(f"LOAD {tmp}, {expr[1]}")
+            return tmp
+        elif expr[0] == 'id':
+            tmp = temporales[t_index]
+            t_index += 1
+            codigo.append(f"LOAD {tmp}, {expr[1]}")
+            return tmp
+        elif expr[0] in ['+', '-', '*', '/', '>', '<', '==']:
+            op_map = {'+': 'ADD', '-': 'SUB', '*': 'MUL', '/': 'DIV',
+                      '>': 'GT', '<': 'LT', '==': 'EQ'}
+            op1 = generar_expr(expr[1])
+            op2 = generar_expr(expr[2])
+            tmp = temporales[t_index]
+            t_index += 1
+            codigo.append(f"{op_map[expr[0]]} {tmp}, {op1}, {op2}")
+            return tmp
+
+    def recorrer(nodo):
+        nonlocal t_index
+        if nodo[0] == 'asignacion':
+            tmp = generar_expr(nodo[2])
+            codigo.append(f"STORE {nodo[1]}, {tmp}")
+        elif nodo[0] == 'printf':
+            codigo.append(f"PRINT {nodo[1]}")
+        elif nodo[0] == 'if':
+            cond = generar_expr(nodo[1])
+            etiqueta_else = f"ELSE_{t_index}"
+            etiqueta_fin = f"ENDIF_{t_index}"
+            t_index += 1
+            codigo.append(f"JZ {cond}, {etiqueta_else}")
+            for s in nodo[2]: recorrer(s)
+            codigo.append(f"JMP {etiqueta_fin}")
+            codigo.append(f"{etiqueta_else}:")
+            for s in nodo[3][1]: recorrer(s)
+            codigo.append(f"{etiqueta_fin}:")
+        elif nodo[0] == 'declaracion':
+            pass
+        elif nodo[0] == 'return':
+            if nodo[1] is not None:
+                tmp = generar_expr(nodo[1])
+                codigo.append(f"RET {tmp}")
+            else:
+                codigo.append("RET")
+
+    if ast[0] == 'programa':
+        for stmt in ast[1]:
+            recorrer(stmt)
+
+    return '\n'.join(codigo)
+
