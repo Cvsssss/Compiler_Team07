@@ -167,6 +167,9 @@ def parse_code(code):
     lexer = base_lexer.clone()
     lexer.lineno = 1
 
+    result = parser.parse(code, lexer=lexer)
+
+
     if not result:
         return "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
 
