@@ -9,7 +9,7 @@ from PIL import Image, ImageTk
 #Archivos necesarios (Lexer y Parser)
 import LEX_C
 import PARSER_C
-
+import Asm_Obj
 
 class CodeAnalyzerApp:
     def __init__(self, root):
@@ -58,8 +58,7 @@ class CodeAnalyzerApp:
         ttk.Button(self.left_panel, text="Cargar Archivo", bootstyle="success-outline", command=self.load_file).pack(pady=5)
         ttk.Button(self.left_panel, text="Analizador Lexico (LEXER)", bootstyle="info-outline", command=self.analyze).pack(pady=5)
         ttk.Button(self.left_panel, text="Analizador Sintactico (PARSER)", bootstyle="warning-outline", command=self.parse).pack(pady=5)
-        ttk.Button(self.left_panel, text="Generar Código Objeto (.o)", bootstyle="danger-outline", command=self.compile_to_object).pack(pady=5)
-
+        ttk.Button(self.left_panel, text="Generar .HEX del asm", bootstyle="danger-outline", command=self.Hex).pack(pady=5)
 
 # Frame de la Salida
         self.right_panel = ttk.Frame(self.paned_window, padding=10)
@@ -136,7 +135,6 @@ class CodeAnalyzerApp:
 
         parse_result = PARSER_C.parse_code(code_content)
         
-        # Mostrar resultado en el área de texto
         self.text_area_output.config(state="normal")
         self.text_area_output.delete("1.0", "end")
         self.text_area_output.insert("end", parse_result)
@@ -153,7 +151,7 @@ class CodeAnalyzerApp:
                             self.img_window.destroy()
                         except:
                             pass
-                    
+
                     # Crear nueva ventana para la imagen
                     self.img_window = ttk.Toplevel(self.root)
                     self.img_window.title("Árbol Sintáctico")
@@ -174,13 +172,18 @@ class CodeAnalyzerApp:
                         text="Cerrar", 
                         command=self.img_window.destroy
                     ).pack(pady=5)
-                    
+
                 except Exception as e:
-                    messagebox.showerror("Error", 
-                                    f"No se pudo mostrar el árbol: {str(e)}")
+                    messagebox.showerror("Error", f"No se pudo mostrar el árbol: {str(e)}")
+                    
             else:
                 messagebox.showinfo("Información", 
                                 "Árbol sintáctico generado en formato texto. Instala Graphviz para ver la versión gráfica.")
+            
+            # Notificar que se generó el código ensamblador
+            if os.path.exists("codigo.asm"):
+                messagebox.showinfo("Código Objeto Generado", "Se generó el archivo 'codigo.asm' con el código en Zilog Z80.")
+
         else:
             from PARSER_C import erroresPAR
             self.text_area_output.config(state="normal")
@@ -190,36 +193,32 @@ class CodeAnalyzerApp:
                 self.text_area_output.insert("end", f"{error}\n")
             self.text_area_output.config(state="disabled")
 
-#Función para el CODIGO OBJETO
-    def compile_to_object(self):
-        code_content = self.text_area_input.get("1.0", "end").strip()
-        if not code_content:
-            messagebox.showwarning("Advertencia", "No hay código para compilar")
+# Funcion para generar el archivo .HEX del asm
+    def Hex(self):
+        asm_file = "codigo.asm"
+        hex_file = "codigo.hex"
+
+        if not os.path.exists(asm_file):
+            messagebox.showerror("Error", f"El archivo {asm_file} no existe. Genera el código mediante el PARSER primero.")
             return
 
-        archivo_c = "programa.c"
-        archivo_objeto = "programa.o"
+        try:
+            with open(asm_file, "r") as f:
+                contenido = f.read()
+        
+            obj_code = Asm_Obj.assemble(contenido.splitlines())
 
-        # Crear el archivo .c
-        with open(archivo_c, 'w') as f:
-            f.write("#include <stdio.h>\n\n")
-            f.write(code_content)
-
-        # Compilar usando gcc
-        comando = ["gcc", "-c", archivo_c, "-o", archivo_objeto]
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al leer el archivo ASM: {str(e)}")
+            return
 
         try:
-            resultado = subprocess.run(comando, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            output = f"Código objeto generado exitosamente: {archivo_objeto}\n"
-        except subprocess.CalledProcessError as e:
-            output = f"Error al compilar:\n{e.stderr}"
-
-        # Mostrar resultado en el área de salida
-        self.text_area_output.config(state="normal")
-        self.text_area_output.delete("1.0", "end")
-        self.text_area_output.insert("end", output)
-        self.text_area_output.config(state="disabled")
-
+            with open(hex_file, "w") as f:
+                for line in obj_code:
+                    f.write(line + "\n")
+            messagebox.showinfo("Éxito", f"Archivo {hex_file} generado exitosamente.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al escribir el archivo HEX: {str(e)}")
 
 
 if __name__ == "__main__":
