@@ -1,5 +1,9 @@
 import ply.yacc as yacc
+
+# Archivos necesarios
+import Asm_Obj
 from LEX_C import tokens, lexer as base_lexer
+
 from graphviz import Digraph
 from graphviz.backend.execute import ExecutableNotFound
 
@@ -128,6 +132,7 @@ def execute(stmt):
         pass
     elif stmt[0] == 'asignacion':
         variables[stmt[1]] = stmt[2]
+    
 
 def generar_arbol_sintactico(arbol, dot=None, padre=None):
     if dot is None:
@@ -155,32 +160,31 @@ def generar_arbol_sintactico(arbol, dot=None, padre=None):
     return dot
 
 def parse_code(code):
-    global variables
-    global erroresPAR
+    global variables, erroresPAR
     erroresPAR = []
     variables = {}
 
-# Crear un nuevo lexer con lineno reiniciado
     lexer = base_lexer.clone()
     lexer.lineno = 1
 
-    result = parser.parse(code, lexer=lexer)
-    
-    
+    if not result:
+        return "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
 
-    # Generar imagen con Graphviz
+    output = "Árbol sintáctico generado correctamente.\n"
     try:
         dot = Digraph(comment='Árbol Sintáctico')
-        if result is not None:
-            build_graph(dot, result)
-            dot.render("arbol_sintactico", format='png', cleanup=True)
-            output = "Árbol sintáctico generado correctamente.\n"
-            output += "Imagen del árbol generada: arbol_sintactico.png\n"
-        else:
-            output = "ERROR DE SINTAXIS\nNo se pudo generar el árbol sintáctico.\n"
+        build_graph(dot, result)
+        dot.render("arbol_sintactico", format='png', cleanup=True)
+        output += "Imagen del árbol generada: arbol_sintactico.png\n"
     except ExecutableNotFound:
         output += "Graphviz no está instalado. No se generó imagen.\n"
 
+    # Generar código objeto
+    if result is not None:
+        asm_code = Asm_Obj.generar_codigo_zilog(result)
+        with open("codigo.asm", "w") as f:
+            f.write(asm_code)
+        output += "\nCódigo objeto generado en: codigo.asm\n"
     return output
 
 def build_graph(dot, node, parent=None, count=[0]):

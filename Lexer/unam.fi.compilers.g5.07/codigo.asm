@@ -1,0 +1,26 @@
+x: DEFB 0
+LD A, 10
+PUSH AF
+LD A, 2
+POP BC
+LD A, B
+CALL MUL
+PUSH AF
+LD A, 1
+POP BC
+LD A, B
+ADD
+LD (x), A
+LD A, (x)
+PUSH AF
+LD A, 10
+POP BC
+LD A, B
+CP
+CP 10
+JP LE, ELSE_0
+; PRINT "x es mayor a 10"
+JP ENDIF_0
+ELSE_0:
+; PRINT "x es menor a 10"
+ENDIF_0:
